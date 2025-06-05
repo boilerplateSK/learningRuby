@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Python Developer's Guide to Ruby</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #333333;
+        }
+        h1, h2, h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+        }
+        code, pre {
+            font-family: 'Fira Code', monospace;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-link.active {
+            color: #2D3748;
+            border-bottom-color: #4A5568;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .comparison-tab.active {
+            background-color: #4A5568;
+            color: #F8F7F4;
+        }
+        .comparison-content {
+            display: none;
+        }
+        .comparison-content.active {
+            display: grid;
+        }
+        .crud-step.active {
+           border-left-color: #4A5568;
+           background-color: #FFFFFF;
+        }
+        .crud-content {
+            display: none;
+        }
+        .crud-content.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+         @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals & Slate Blue -->
+    <!-- Application Structure Plan: A single-page application with a sticky top navigation for non-linear exploration. The structure is thematic, breaking down the guide into: 1) A 'Why Ruby?' introduction with a comparative philosophy chart. 2) A core 'Python vs. Ruby' section with tabbed, side-by-side code comparisons for fundamental concepts. 3) An 'Environment Setup' guide. 4) An interactive, step-by-step 'Rails Todo App' walkthrough. This structure was chosen to cater to a developer's learning style, allowing them to either follow the guide sequentially or jump directly to topics of interest. The side-by-side comparisons and interactive walkthroughs are designed to accelerate learning by leveraging existing Python knowledge and breaking down complex processes into digestible steps. -->
+    <!-- Visualization & Content Choices: 1) Philosophy Chart: Report Info -> Core philosophical differences. Goal -> Compare. Viz -> Radar Chart (Chart.js). Interaction -> Hover for tooltips. Justification -> Excellent for multi-attribute comparison between two subjects. 2) Code Comparison: Report Info -> Syntax for data types, control flow, OOP, etc. Goal -> Compare. Viz -> Two-column HTML layout with JS-powered tabs. Interaction -> Click tabs to switch content. Justification -> Direct comparison is the most effective learning method for this audience. 3) Rails CRUD Walkthrough: Report Info -> Steps for building a Todo app. Goal -> Organize/Guide. Viz -> Interactive vertical stepper/accordion. Interaction -> Click steps to reveal code and explanations. Justification -> Makes a complex, multi-file process manageable and less intimidating than a long wall of text. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-800">Python <span class="text-red-600">to</span> Ruby</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-900 border-b-2 border-transparent">Home</a>
+                        <a href="#comparison" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-900 border-b-2 border-transparent">Python vs. Ruby</a>
+                        <a href="#setup" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-900 border-b-2 border-transparent">Setup</a>
+                        <a href="#rails" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-900 border-b-2 border-transparent">Rails Todo App</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="home" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">A Python Developer's Accelerated Guide to Ruby</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Transition smoothly from Python by understanding Ruby's core philosophies, strengths, and seeing direct, side-by-side comparisons.</p>
+            </div>
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md">
+                <h3 class="text-2xl font-bold text-center mb-6">Language Philosophies: A Visual Comparison</h3>
+                <p class="text-center text-gray-600 mb-6 max-w-3xl mx-auto">This chart illustrates the differing design philosophies between Python and Ruby. Python prioritizes one clear way to do things ("The Zen of Python"), while Ruby values developer happiness and flexibility, often providing multiple ways to achieve the same result. Understanding this is key to grasping the "why" behind their syntax and conventions.</p>
+                <div class="chart-container">
+                    <canvas id="philosophyChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Core Concepts: Python vs. Ruby</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Leverage your Python knowledge with direct, side-by-side code examples for Ruby's fundamental constructs. Click the tabs to explore different topics.</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-1 sm:space-x-4 justify-center p-2" aria-label="Tabs">
+                        <button class="comparison-tab whitespace-nowrap py-2 px-3 sm:px-4 font-medium text-sm rounded-md text-gray-600 hover:bg-gray-200" data-target="syntax">Syntax & Types</button>
+                        <button class="comparison-tab whitespace-nowrap py-2 px-3 sm:px-4 font-medium text-sm rounded-md text-gray-600 hover:bg-gray-200" data-target="control">Control Flow</button>
+                        <button class="comparison-tab whitespace-nowrap py-2 px-3 sm:px-4 font-medium text-sm rounded-md text-gray-600 hover:bg-gray-200" data-target="functions">Functions & Blocks</button>
+                        <button class="comparison-tab whitespace-nowrap py-2 px-3 sm:px-4 font-medium text-sm rounded-md text-gray-600 hover:bg-gray-200" data-target="oop">OOP</button>
+                    </nav>
+                </div>
+                <div class="p-4 md:p-6">
+                    <div id="syntax-content" class="comparison-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2 text-center text-gray-700">Python 🐍</h3>
+                                <div class="bg-gray-100 p-4 rounded-lg h-full">
+                                    <h4 class="font-semibold mb-2">Variables & Assignment</h4>
+                                    <pre class="bg-gray-200 p-2 rounded text-sm"><code>name = "Guido"
+age = 68
+pi = 3.14</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">Collections: List & Dictionary</h4>
+                                    <pre class="bg-gray-200 p-2 rounded text-sm"><code># List (ordered, mutable)
+my_list = [1, "a", True]
+print(my_list[1]) # 'a'
+
+# Dictionary (key-value)
+my_dict = {"key": "value", "id": 123}
+print(my_dict["key"]) # 'value'</code></pre>
+                                     <h4 class="font-semibold mt-4 mb-2">String Interpolation (f-string)</h4>
+                                     <pre class="bg-gray-200 p-2 rounded text-sm"><code>pet = "parrot"
+print(f"I have a {pet}.")</code></pre>
+                                </div>
+                            </div>
+                            <div>
+                               <h3 class="text-xl font-bold mb-2 text-center text-red-600">Ruby 💎</h3>
+                                <div class="bg-red-50 p-4 rounded-lg h-full">
+                                    <h4 class="font-semibold mb-2">Variables & Assignment</h4>
+                                    <pre class="bg-red-100 p-2 rounded text-sm"><code>name = "Matz"
+age = 59
+PI = 3.14 # Constants are UPPERCASE</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">Collections: Array & Hash</h4>
+                                    <pre class="bg-red-100 p-2 rounded text-sm"><code># Array (ordered, mutable)
+my_array = [1, "a", true]
+puts my_array[1] # "a"
+
+# Hash (key-value)
+my_hash = {:key => "value", :id => 123}
+puts my_hash[:key] # "value"</code></pre>
+                                     <h4 class="font-semibold mt-4 mb-2">String Interpolation (double quotes)</h4>
+                                     <pre class="bg-red-100 p-2 rounded text-sm"><code>pet = "cat"
+puts "I have a #{pet}."</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div id="control-content" class="comparison-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2 text-center text-gray-700">Python 🐍</h3>
+                                <div class="bg-gray-100 p-4 rounded-lg h-full">
+                                    <h4 class="font-semibold mb-2">If/Elif/Else (Indentation)</h4>
+                                    <pre class="bg-gray-200 p-2 rounded text-sm"><code>x = 10
+if x > 5:
+    print("Greater")
+elif x == 5:
+    print("Equal")
+else:
+    print("Smaller")</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">For Loop</h4>
+                                    <pre class="bg-gray-200 p-2 rounded text-sm"><code>for i in range(3):
+    print(i) # 0, 1, 2</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">List Comprehension</h4>
+                                    <pre class="bg-gray-200 p-2 rounded text-sm"><code>squares = [x*x for x in [1, 2, 3]]
+# [1, 4, 9]</code></pre>
+                                </div>
+                            </div>
+                            <div>
+                               <h3 class="text-xl font-bold mb-2 text-center text-red-600">Ruby 💎</h3>
+                                <div class="bg-red-50 p-4 rounded-lg h-full">
+                                    <h4 class="font-semibold mb-2">If/Elsif/Else (end keyword)</h4>
+                                    <pre class="bg-red-100 p-2 rounded text-sm"><code>x = 10
+if x > 5
+  puts "Greater"
+elsif x == 5
+  puts "Equal"
+else
+  puts "Smaller"
+end</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">Iterator (.each)</h4>
+                                    <pre class="bg-red-100 p-2 rounded text-sm"><code>(0...3).each do |i|
+  puts i # 0, 1, 2
+end</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">Map (functional equivalent)</h4>
+                                    <pre class="bg-red-100 p-2 rounded text-sm"><code>squares = [1, 2, 3].map { |x| x*x }
+# [1, 4, 9]</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div id="functions-content" class="comparison-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2 text-center text-gray-700">Python 🐍</h3>
+                                <div class="bg-gray-100 p-4 rounded-lg h-full">
+                                    <h4 class="font-semibold mb-2">Function Definition</h4>
+                                    <pre class="bg-gray-200 p-2 rounded text-sm"><code>def add(a, b):
+    return a + b
+    
+result = add(2, 3) # 5</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">Lambda Function</h4>
+                                    <pre class="bg-gray-200 p-2 rounded text-sm"><code>multiply = lambda x, y: x * y
+result = multiply(4, 5) # 20</code></pre>
+                                </div>
+                            </div>
+                            <div>
+                               <h3 class="text-xl font-bold mb-2 text-center text-red-600">Ruby 💎</h3>
+                                <div class="bg-red-50 p-4 rounded-lg h-full">
+                                    <h4 class="font-semibold mb-2">Method Definition</h4>
+                                    <pre class="bg-red-100 p-2 rounded text-sm"><code>def add(a, b)
+  a + b # Implicit return
+end
+
+result = add(2, 3) # 5</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">Blocks & Procs</h4>
+                                    <pre class="bg-red-100 p-2 rounded text-sm"><code># Blocks are anonymous functions
+[1, 2].each { |num| puts num }
+
+# Procs are objects
+multiply = Proc.new { |x, y| x * y }
+result = multiply.call(4, 5) # 20</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="oop-content" class="comparison-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h3 class="text-xl font-bold mb-2 text-center text-gray-700">Python 🐍</h3>
+                                <div class="bg-gray-100 p-4 rounded-lg h-full">
+                                    <h4 class="font-semibold mb-2">Class Definition</h4>
+                                    <pre class="bg-gray-200 p-2 rounded text-sm"><code>class Dog:
+    def __init__(self, name):
+        self.name = name
+
+    def bark(self):
+        return f"{self.name} says woof!"
+
+d = Dog("Fido")
+print(d.bark())</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">Inheritance</h4>
+                                     <pre class="bg-gray-200 p-2 rounded text-sm"><code>class Poodle(Dog):
+    def dance(self):
+        return "The poodle dances."</code></pre>
+                                </div>
+                            </div>
+                            <div>
+                               <h3 class="text-xl font-bold mb-2 text-center text-red-600">Ruby 💎</h3>
+                                <div class="bg-red-50 p-4 rounded-lg h-full">
+                                    <h4 class="font-semibold mb-2">Class Definition</h4>
+                                    <pre class="bg-red-100 p-2 rounded text-sm"><code>class Dog
+  def initialize(name)
+    @name = name # Instance variable
+  end
+
+  def bark
+    "#{@name} says woof!"
+  end
+end
+
+d = Dog.new("Fido")
+puts d.bark</code></pre>
+                                    <h4 class="font-semibold mt-4 mb-2">Inheritance & Mixins</h4>
+                                     <pre class="bg-red-100 p-2 rounded text-sm"><code>class Poodle < Dog # Single inheritance
+  # Mixins for multiple inheritance
+  include Dancable 
+end</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="setup" class="content-section">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Setting Up Your Ruby Environment</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Follow these steps to get a robust Ruby development environment on your machine. We recommend `rbenv` for its simplicity.</p>
+            </div>
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold mb-4 flex items-center"><span class="bg-gray-800 text-white rounded-full h-8 w-8 text-sm flex items-center justify-center mr-3">1</span>Install a Version Manager (rbenv)</h3>
+                    <p class="mb-4 text-gray-600">A version manager like `rbenv` lets you easily switch between multiple Ruby versions. It's similar to `pyenv` in the Python world.</p>
+                    <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg"><code># For macOS with Homebrew
+brew install rbenv ruby-build
+
+# Add rbenv to your shell
+rbenv init
+
+# Add to your shell's config file (e.g. ~/.zshrc or ~/.bash_profile)
+# eval "$(rbenv init -)"
+
+# Restart your shell for changes to take effect</code></pre>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold mb-4 flex items-center"><span class="bg-gray-800 text-white rounded-full h-8 w-8 text-sm flex items-center justify-center mr-3">2</span>Install Ruby</h3>
+                    <p class="mb-4 text-gray-600">With your version manager installed, you can now install a specific version of Ruby and set it as your global default.</p>
+                    <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg"><code># List all available stable versions
+rbenv install -l
+
+# Install a specific version (e.g., 3.2.2)
+rbenv install 3.2.2
+
+# Set it as the global version
+rbenv global 3.2.2
+
+# Verify your version
+ruby -v</code></pre>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold mb-4 flex items-center"><span class="bg-gray-800 text-white rounded-full h-8 w-8 text-sm flex items-center justify-center mr-3">3</span>Install Bundler and Rails</h3>
+                    <p class="mb-4 text-gray-600">Bundler manages your project's dependencies (gems), much like `pip` and `requirements.txt`. Rails is itself a gem.</p>
+                     <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg"><code># Bundler is the package manager for Ruby
+gem install bundler
+
+# Install the Rails gem
+gem install rails
+
+# Verify Rails installation
+rails -v</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="rails" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Building a Todo App with Rails</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Let's put your knowledge into practice by building a simple web application. This interactive walkthrough breaks down the process of creating a full CRUD (Create, Read, Update, Delete) application using the Model-View-Controller (MVC) pattern in Rails.</p>
+            </div>
+             <div class="flex flex-col md:flex-row gap-8">
+                <div class="w-full md:w-1/3">
+                    <div id="crud-stepper" class="space-y-2 sticky top-24">
+                        <button class="crud-step text-left w-full p-4 border-l-4 border-gray-200 transition" data-target="crud-setup">
+                            <h4 class="font-bold">Setup Project</h4>
+                            <p class="text-sm text-gray-500">Create a new Rails app.</p>
+                        </button>
+                        <button class="crud-step text-left w-full p-4 border-l-4 border-gray-200 transition" data-target="crud-create">
+                            <h4 class="font-bold">Create</h4>
+                            <p class="text-sm text-gray-500">Model, Route, Controller, and View to add new todos.</p>
+                        </button>
+                         <button class="crud-step text-left w-full p-4 border-l-4 border-gray-200 transition" data-target="crud-read">
+                            <h4 class="font-bold">Read</h4>
+                            <p class="text-sm text-gray-500">Display the list of all todos.</p>
+                        </button>
+                         <button class="crud-step text-left w-full p-4 border-l-4 border-gray-200 transition" data-target="crud-update">
+                            <h4 class="font-bold">Update</h4>
+                            <p class="text-sm text-gray-500">Add logic and views to edit existing todos.</p>
+                        </button>
+                         <button class="crud-step text-left w-full p-4 border-l-4 border-gray-200 transition" data-target="crud-delete">
+                            <h4 class="font-bold">Delete</h4>
+                            <p class="text-sm text-gray-500">Implement functionality to remove todos.</p>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full md:w-2/3">
+                    <div id="crud-content-container" class="bg-white p-6 rounded-xl shadow-md min-h-[60vh]">
+                        <div id="crud-setup-content" class="crud-content space-y-4">
+                           <h3 class="text-2xl font-bold">Project Setup</h3>
+                           <p>First, generate a new Rails application from your terminal. We'll specify PostgreSQL as the database.</p>
+                            <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg"><code>rails new todolist -d postgresql
+cd todolist
+rails db:create
+bin/dev # Starts the server</code></pre>
+                            <p>This command creates a new directory named `todolist` with the entire Rails project structure.</p>
+                        </div>
+                        <div id="crud-create-content" class="crud-content space-y-4">
+                            <h3 class="text-2xl font-bold">Create Operation</h3>
+                            <p>We need a Model to represent a todo, a Route to accept the request, a Controller action to process it, and a View with a form.</p>
+                            <div>
+                                <h4 class="font-semibold mb-2">1. Generate Model & Controller</h4>
+                                <pre class="bg-gray-100 text-gray-800 p-4 rounded-lg"><code># Creates Todo model with a 'description' field and a migration
+rails generate model Todo description:string
+
+# Creates a controller to handle requests for todos
+rails generate controller Todos
+
+# Run the migration to create the 'todos' table in the database
+rails db:migrate</code></pre>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold mb-2">2. Define Routes (`config/routes.rb`)</h4>
+                                <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code>Rails.application.routes.draw do
+  root "todos#index" # Home page
+  resources :todos, only: [:index, :create]
+end</code></pre>
+                             </div>
+                             <div>
+                                <h4 class="font-semibold mb-2">3. Add Controller Logic (`app/controllers/todos_controller.rb`)</h4>
+                                 <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code>class TodosController < ApplicationController
+  def index
+    @todos = Todo.all
+  end
+
+  def create
+    Todo.create(todo_params)
+    redirect_to root_path
+  end
+
+  private
+
+  def todo_params
+    params.require(:todo).permit(:description)
+  end
+end</code></pre>
+                             </div>
+                             <div>
+                                <h4 class="font-semibold mb-2">4. Create View Form (`app/views/todos/index.html.erb`)</h4>
+                                <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code>&lt;h1&gt;Todos&lt;/h1&gt;
+&lt;%= form_with(model: Todo.new) do |form| %&gt;
+  &lt;%= form.text_field :description, placeholder: "Add a new todo" %&gt;
+  &lt;%= form.submit "Add" %&gt;
+&lt;% end %&gt;</code></pre>
+                            </div>
+                        </div>
+                         <div id="crud-read-content" class="crud-content space-y-4">
+                            <h3 class="text-2xl font-bold">Read Operation</h3>
+                            <p>The `index` action in our controller already fetches all todos. Now we just need to display them in the view.</p>
+                            <div>
+                                <h4 class="font-semibold mb-2">Display Todos (`app/views/todos/index.html.erb`)</h4>
+                                <p>Add this loop below your form.</p>
+                                <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code>&lt;ul&gt;
+  &lt;% @todos.each do |todo| %&gt;
+    &lt;li&gt;
+      &lt;%= todo.description %&gt;
+    &lt;/li&gt;
+  &lt;% end %&gt;
+&lt;/ul&gt;</code></pre>
+                            </div>
+                        </div>
+                         <div id="crud-update-content" class="crud-content space-y-4">
+                             <h3 class="text-2xl font-bold">Update Operation</h3>
+                             <p>Updating requires routes for editing/updating, controller actions, a new view for the edit form, and a link to get there.</p>
+                             <div>
+                                <h4 class="font-semibold mb-2">1. Update Routes (`config/routes.rb`)</h4>
+                                <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code># Add :edit and :update to the resources
+resources :todos, only: [:index, :create, :edit, :update]</code></pre>
+                             </div>
+                              <div>
+                                <h4 class="font-semibold mb-2">2. Add Controller Logic (`app/controllers/todos_controller.rb`)</h4>
+                                 <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code># Add these methods inside the class
+def edit
+  @todo = Todo.find(params[:id])
+end
+
+def update
+  @todo = Todo.find(params[:id])
+  if @todo.update(todo_params)
+    redirect_to root_path
+  else
+    render :edit
+  end
+end</code></pre>
+                             </div>
+                             <div>
+                                <h4 class="font-semibold mb-2">3. Create Edit View (`app/views/todos/edit.html.erb`)</h4>
+                                <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code>&lt;h1&gt;Edit Todo&lt;/h1&gt;
+&lt;%= form_with(model: @todo) do |form| %&gt;
+  &lt;%= form.text_field :description %&gt;
+  &lt;%= form.submit "Update" %&gt;
+&lt;% end %&gt;</code></pre>
+                             </div>
+                             <div>
+                                <h4 class="font-semibold mb-2">4. Add Edit Link (`app/views/todos/index.html.erb`)</h4>
+                                <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code>&lt;%# Inside the .each loop %&gt;
+&lt;%= link_to "Edit", edit_todo_path(todo) %&gt;</code></pre>
+                            </div>
+                        </div>
+                         <div id="crud-delete-content" class="crud-content space-y-4">
+                           <h3 class="text-2xl font-bold">Delete Operation</h3>
+                           <p>Finally, let's add the ability to delete a todo.</p>
+                           <div>
+                                <h4 class="font-semibold mb-2">1. Update Routes (`config/routes.rb`)</h4>
+                                <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code># Add :destroy to the resources
+resources :todos, only: [:index, :create, :edit, :update, :destroy]</code></pre>
+                             </div>
+                              <div>
+                                <h4 class="font-semibold mb-2">2. Add Controller Logic (`app/controllers/todos_controller.rb`)</h4>
+                                 <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code># Add this destroy method
+def destroy
+  @todo = Todo.find(params[:id])
+  @todo.destroy
+  redirect_to root_path, status: :see_other
+end</code></pre>
+                             </div>
+                              <div>
+                                <h4 class="font-semibold mb-2">3. Add Delete Button (`app/views/todos/index.html.erb`)</h4>
+                                <pre class="bg-red-50 text-red-800 p-4 rounded-lg"><code>&lt;%# Inside the .each loop %&gt;
+&lt;%= button_to "Delete", todo_path(todo), method: :delete %&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.content-section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            const comparisonTabs = document.querySelectorAll('.comparison-tab');
+            const comparisonContents = document.querySelectorAll('.comparison-content');
+
+            const crudSteps = document.querySelectorAll('.crud-step');
+            const crudContents = document.querySelectorAll('.crud-content');
+
+            function updateContent() {
+                const hash = window.location.hash || '#home';
+                
+                sections.forEach(section => {
+                    if ('#' + section.id === hash) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+
+            window.addEventListener('hashchange', updateContent);
+            updateContent();
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = link.getAttribute('href');
+                });
+            });
+
+            function setupTabs(tabs, contents) {
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const target = tab.dataset.target;
+
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+
+                        contents.forEach(content => {
+                            if (content.id === `${target}-content`) {
+                                content.classList.add('active');
+                            } else {
+                                content.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+                if(tabs.length > 0) tabs[0].click();
+            }
+            
+            function setupStepper(steps, contents) {
+                 steps.forEach(step => {
+                    step.addEventListener('click', () => {
+                        const target = step.dataset.target;
+
+                        steps.forEach(s => s.classList.remove('active'));
+                        step.classList.add('active');
+
+                        contents.forEach(content => {
+                            if (content.id === `${target}-content`) {
+                                content.classList.add('active');
+                            } else {
+                                content.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+                if(steps.length > 0) steps[0].click();
+            }
+
+            setupTabs(comparisonTabs, comparisonContents);
+            setupStepper(crudSteps, crudContents);
+
+            const ctx = document.getElementById('philosophyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Flexibility', 'Programmer Happiness', 'Strictness/Clarity', 'Metaprogramming', 'Community Size', 'Beginner Friendliness'],
+                    datasets: [{
+                        label: 'Ruby',
+                        data: [9, 9, 5, 9, 6, 7],
+                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                        borderColor: 'rgba(220, 38, 38, 1)',
+                        pointBackgroundColor: 'rgba(220, 38, 38, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(220, 38, 38, 1)'
+                    }, {
+                        label: 'Python',
+                        data: [6, 7, 9, 4, 9, 9],
+                        backgroundColor: 'rgba(74, 85, 104, 0.2)',
+                        borderColor: 'rgba(74, 85, 104, 1)',
+                        pointBackgroundColor: 'rgba(74, 85, 104, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(74, 85, 104, 1)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                max: 10,
+                                stepSize: 2,
+                                backdropColor: 'transparent'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                           position: 'top',
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
